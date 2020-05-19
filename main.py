@@ -3,9 +3,20 @@ from telebot import types
 import time
 import cfg
 import config
-import os
+import os.path
 import random
 
+gg = 0
+
+def update_list():
+	path = './picture'
+	countd = sum(os.path.isfile(os.path.join(path, f)) for f in os.listdir(path))
+	count_fr_count = 1
+	picture_list = []
+	while countd >= count_fr_count:
+		picture_list.append(count_fr_count)
+		count_fr_count +=1
+	return picture_list
 
 bot = telebot.TeleBot('токен')
 
@@ -44,11 +55,10 @@ def crypto_price_telegram(message):
 
 
 			markup = types.ReplyKeyboardMarkup(resize_keyboard=False)
-			item1 = types.KeyboardButton('❌Предыдущая')
 			item2 = types.KeyboardButton('Назад')
 			item3 = types.KeyboardButton('✅Следующая')
 
-			markup.add(item1,item2,item3)
+			markup.add(item2,item3)
 			bot.send_message(message.chat.id,'Выбирай варики внизу чертила👇👇',reply_markup=markup)
 
 		if message.text == 'Назад':
@@ -56,15 +66,11 @@ def crypto_price_telegram(message):
 			cfg.gg = 0
 
 		if message.text == '✅Следующая':
-			cfg.gg = cfg.gg + 1
-			if cfg.gg > (cfg.picture_list[-1] - 1):
-				cfg.gg = 0
-			bot.send_photo(message.chat.id,get_picture(cfg.picture_list[cfg.gg]))
-			print(cfg.gg)
-		if message.text == '❌Предыдущая':
-			cfg.gg = cfg.gg - 1
-			bot.send_photo(message.chat.id,get_picture(cfg.picture_list[cfg.gg]))
-			print(cfg.gg)
+			global gg
+			gg += 1
+			if gg >= update_list()[-1]:
+				gg = 0
+			bot.send_photo(message.chat.id,get_picture(update_list()[gg]))
 
 		if message.text == '🔥Добавить свои пикчи':
 			markup = types.ReplyKeyboardMarkup(resize_keyboard=False)
@@ -82,10 +88,11 @@ def photo_img(message):
 	try:
 		file_info = bot.get_file(message.photo[len(message.photo)-1].file_id)
 		downloaded_file = bot.download_file(file_info.file_path)
-		src='picture/moderation/' + random_name() + '.jpg';
+		src='picture/' + str((update_list()[-1] + 1)) + '.jpg';
 		with open(src, 'wb') as new_file:
 			new_file.write(downloaded_file)
-		bot.reply_to(message,"Фото добавлено в очередь на модерацию,ожидайте!")
+		update_list()
+		bot.reply_to(message,"Фото добавлено в базу данных!")
 
 	except Exception as e:
 		bot.reply_to(message,e )
