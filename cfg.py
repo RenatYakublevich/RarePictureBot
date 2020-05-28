@@ -1,12 +1,20 @@
 from vedis import Vedis
 import config
+import os.path
 
 gg = 0
-picture_list = [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
-last_check = picture_list[-1] + 1
-last_check = str(last_check)
 
 
+def update_list():
+    path = './picture'
+    countd = sum(os.path.isfile(os.path.join(path, f)) for f in os.listdir(path))
+    return countd
+update_list()
+count_fr_count = 1
+picture_list = []
+while update_list() >= count_fr_count:
+    picture_list.append(count_fr_count)
+    count_fr_count +=1
 # Пытаемся узнать из базы «состояние» пользователя
 def get_current_state(user_id):
     with Vedis(config.db_file) as db:

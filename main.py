@@ -1,6 +1,5 @@
 import telebot
 from telebot import types
-import time
 import cfg
 import config
 import os.path
@@ -18,17 +17,7 @@ def update_list():
 		count_fr_count +=1
 	return picture_list
 
-bot = telebot.TeleBot('токен')
-
-def random_name():
-	r1 = random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
-	r2 = random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
-	r3 = random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
-	r4 = random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
-	r5 = random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
-
-	code = r1 + r2 + r3 + r4 + r5
-	return code
+bot = telebot.TeleBot(config.token)
 
 def get_picture(id_picture):
 	place = 'picture/' + str(id_picture) + '.jpg'
