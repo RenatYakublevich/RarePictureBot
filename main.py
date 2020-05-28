@@ -1,11 +1,8 @@
 import telebot
 from telebot import types
-import cfg
 import config
 import os.path
 import random
-
-gg = 0
 
 def update_list():
 	path = './picture'
@@ -16,18 +13,18 @@ def update_list():
 		picture_list.append(count_fr_count)
 		count_fr_count +=1
 	return picture_list
+def random_pic():
+	final = 'picture/' + str(random.choice(update_list())) + '.jpg'
+	picture_place = open(final, 'rb')
+	return picture_place
 
 bot = telebot.TeleBot(config.token)
 
-def get_picture(id_picture):
-	place = 'picture/' + str(id_picture) + '.jpg'
-	picture_place  = open(place, 'rb')
-	return picture_place
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
 	markup = types.ReplyKeyboardMarkup(resize_keyboard=False)
-	item1 = types.KeyboardButton('📷Посмотреть пикчи')
+	item1 = types.KeyboardButton('📷Посмотреть рандомную пикчу')
 	item2 = types.KeyboardButton('🔥Добавить свои пикчи')
 
 	markup.add(item1,item2)
@@ -38,9 +35,9 @@ def welcome(message):
 @bot.message_handler(content_types=['text'])
 def crypto_price_telegram(message):
 	if message.chat.type == 'private':
-		if message.text == '📷Посмотреть пикчи':
+		if message.text == '📷Посмотреть рандомную пикчу':
 
-			bot.send_photo(message.chat.id, get_picture(1))
+			bot.send_photo(message.chat.id, random_pic())
 
 
 			markup = types.ReplyKeyboardMarkup(resize_keyboard=False)
@@ -52,14 +49,9 @@ def crypto_price_telegram(message):
 
 		if message.text == 'Назад':
 			welcome(message)
-			cfg.gg = 0
 
 		if message.text == '✅Следующая':
-			global gg
-			gg += 1
-			if gg >= update_list()[-1]:
-				gg = 0
-			bot.send_photo(message.chat.id,get_picture(update_list()[gg]))
+			bot.send_photo(message.chat.id, random_pic())
 
 		if message.text == '🔥Добавить свои пикчи':
 			markup = types.ReplyKeyboardMarkup(resize_keyboard=False)
